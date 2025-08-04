@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerAddress extends Model
 {
@@ -22,6 +23,12 @@ class CustomerAddress extends Model
         'is_default',
         'phone',
         'notes',
+    ];
+
+    protected $casts = [
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+        'is_default' => 'boolean',
     ];
 
     public function customer()
