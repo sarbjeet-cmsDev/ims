@@ -3,7 +3,9 @@
 <head>
     <title>Welcome</title>
       @vite('resources/css/app.css')
+      
 </head>
+
 <body class="m-8 ...">
  <input type="{{ $type ?? 'text' }}"
     name="{{ $name }}"
