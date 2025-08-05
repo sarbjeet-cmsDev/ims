@@ -9,45 +9,34 @@ echo "HEllo
 
 A Laravel-based Inventory Management System (IMS) with Tailwind CSS, reusable components, and customer management features.
 
----
-
-##  Project Setup Instructions
-
-
-1. **Clone the Repository**
-
 ```bash
-git clone 
-cd ims
 
-2. Update the .env or PLEASE COPY From the .env example 
+DAY 2
 
-Task 3: Dummy User Seeding
+Integrate in your project for Frontend validation
 
-php artisan make:seeder UserSeeder
-php artisan db:seed
+Create Customer, CustomerAddress Entities and Controllers & ROUTES WITH RESOURCES
 
-Task 4: Reusable Blade Components
-Reusable Blade components created using Tailwind
+php artisan make:controller CustomerController --resource
+php artisan make:controller CustomerAddressesController --resource
 
-Task 5: Customer Management, Created Migration
+apply frontend and backend valiadtion.
 
-customers, customer_addresses
+backed valiadtion apllying using request.
+frontend valiadtion applying using js.
 
-php artisan make:migration create_Customers_table
-php artisan make:migration create_Customers_Addresses_table
+DAY 3 
 
-php artisan make:model Customer
-php artisan make:model CustomerAddress
+php artisan make:job ExportCustomersJob
 
-php artisan migrate
+composer require league/csv
+mkdir -p storage/app/exports
+ touch storage/app/exports/test.csv
+ls -l storage/app/exports/
 
-Relationships Defined
+php artisan make:model CustomerExport -m
+php artisan make:controller CustomerExportController
 
-
-
-
-
-
+php artisan queue:work --queue=customer-export
 
 >>>>>>> c2323ad41ddc0a066d57fda3d244405b631702d7

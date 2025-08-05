@@ -4,17 +4,14 @@
 <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded shadow">
     <h1 class="text-2xl font-bold mb-6">Edit Customer</h1>
 
-    <form action="{{ route('customers.update', $customer->id) }}" method="POST">
+    <form action="{{ route('customers.update', $customer->id) }}" method="POST" id="edit-customer-form">
         @csrf
         @method('PUT')
 
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label class="block font-semibold mb-1">Name</label>
-                <input type="text" name="name" value="{{ old('name', $customer->name) }}" class="w-full border p-2 rounded">
-                @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <x-input name="name" :value="old('name', $customer->name)" placeholder="Enter name" />
             </div>
 
             <div>
@@ -27,11 +24,9 @@
 
             <div>
                 <label class="block font-semibold mb-1">Phone</label>
-                <input type="text" name="phone" value="{{ old('phone', $customer->phone) }}" class="w-full border p-2 rounded">
-                @error('phone')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <x-phone-input :phone="old('phone', $customer->phone)" :country="old('country_code', $customer->country_code ?? '+91')" />
             </div>
+
 
             <div>
                 <label class="block font-semibold mb-1">Company Name</label>

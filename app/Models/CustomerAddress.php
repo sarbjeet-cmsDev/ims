@@ -20,10 +20,11 @@ class CustomerAddress extends Model
         'country',
         'latitude',
         'longitude',
-        'is_default',
         'phone',
+        'is_default',
         'notes',
     ];
+
 
     protected $casts = [
         'latitude' => 'decimal:7',

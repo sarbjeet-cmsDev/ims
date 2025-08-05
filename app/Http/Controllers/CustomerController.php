@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Jobs\ExportCustomersJob;
+use App\Models\CustomerExport;
 
 class CustomerController extends Controller
 {
@@ -72,7 +74,19 @@ class CustomerController extends Controller
     {
         $customer = Customer::findOrFail($id);
         $customer->delete();
-
         return redirect()->route('customers.index')->with('success', 'Customer deleted successfully.');
+    }
+
+ 
+    public function export()
+    {
+        $export = CustomerExport::create([
+            'status' => 'pending',
+            'queue' => 'customer-export',
+        ]);
+
+        ExportCustomersJob::dispatch($export)->onQueue('customer-export');
+
+        return back()->with('success', 'Customer export started.');
     }
 }

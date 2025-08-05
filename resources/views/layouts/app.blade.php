@@ -18,13 +18,13 @@
             <a href="{{ url('/') }}" class="text-xl font-bold text-blue-600">IMS</a>
 
             <ul class="flex space-x-4">
-                <li><a href="{{ route('customers.index') }}" class="hover:text-blue-500">Customers</a></li>
-                <li> <a href="{{ route('customers.create') }}" class="bg-green-500 text-white px-3 py-2 rounded">Add Customer</a></li>
-                
-    
+                <li><a href="{{ route('customers.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Customers</a></li>
+                <li><a href="{{ route('customer-addresses.index') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Customers Addresses</a></li>
+               
             </ul>
         </div>
     </nav>
+
 
     <main class="max-w-7xl mx-auto mt-6 px-4">
         @if (session('success'))
@@ -41,6 +41,9 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="{{ asset('/js/validation.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

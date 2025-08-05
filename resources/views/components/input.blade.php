@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Welcome</title>
-      @vite('resources/css/app.css')
-      
-</head>
 
-<body class="m-8 ...">
- <input type="{{ $type ?? 'text' }}"
+<input type="{{ $type ?? 'text' }}"
     name="{{ $name }}"
     id="{{ $id ?? $name }}"
-    value="{{ $value ?? '' }}"
-    class="form-input block w-full p-2.5 border border-gray-300 rounded-lg"
+    value="{{ old($name, $value ?? '') }}"
+    class="form-input block w-full p-2.5 border rounded-lg border-gray-500 @error($name) border-red-500 @enderror"
     placeholder="{{ $placeholder ?? '' }}" />
-</body>
-</html>
+
+@error($name)
+    <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+@enderror
