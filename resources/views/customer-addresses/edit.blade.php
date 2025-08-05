@@ -4,9 +4,8 @@
 <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded shadow">
     <h1 class="text-2xl font-bold mb-6">Edit Customer Address</h1>
 
-<form action="{{ route('customer-addresses.update', ['customer_address' => $address->id]) }}" method="POST">
-
-
+    <form action="{{ route('customer-addresses.update', ['customer_address' => $address->id]) }}" method="POST" id="edit-customer-addresses-form">
+        
         @csrf
         @method('PUT')
 
@@ -36,15 +35,11 @@
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>
+        </div>
 
-            <div class="col-span-2">
-                <label class="block font-semibold mb-1">Street Address</label>
-                <input type="text" name="street_address" value="{{ old('street_address', $address->street_address) }}" class="w-full border p-2 rounded">
-                @error('street_address')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
+        <x-address :address="$address" />
 
+        <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
                 <label class="block font-semibold mb-1">Apartment</label>
                 <input type="text" name="apartment" value="{{ old('apartment', $address->apartment) }}" class="w-full border p-2 rounded">
@@ -54,33 +49,9 @@
             </div>
 
             <div>
-                <label class="block font-semibold mb-1">City</label>
-                <input type="text" name="city" value="{{ old('city', $address->city) }}" class="w-full border p-2 rounded">
-                @error('city')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div>
                 <label class="block font-semibold mb-1">State</label>
                 <input type="text" name="state" value="{{ old('state', $address->state) }}" class="w-full border p-2 rounded">
                 @error('state')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div>
-                <label class="block font-semibold mb-1">Postal Code</label>
-                <input type="text" name="postal_code" value="{{ old('postal_code', $address->postal_code) }}" class="w-full border p-2 rounded">
-                @error('postal_code')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
-            </div>
-
-            <div class="col-span-2">
-                <label class="block font-semibold mb-1">Country</label>
-                <input type="text" name="country" value="{{ old('country', $address->country) }}" class="w-full border p-2 rounded">
-                @error('country')
                     <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
             </div>

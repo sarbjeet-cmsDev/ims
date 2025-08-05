@@ -12,7 +12,7 @@
 
     <div class="mb-4">
         <a href="{{ route('customer-addresses.create') }}"
-           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+           class="bg-green-500 text-white px-3 py-2 rounded">
            + Add New Address
         </a>
     </div>

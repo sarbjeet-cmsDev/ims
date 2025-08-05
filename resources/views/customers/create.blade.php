@@ -5,16 +5,13 @@
     <h1 class="text-2xl font-bold mb-6">Create New Customer</h1>
 
 
-    <form action="{{ route('customers.store') }}" method="POST">
+    <form action="{{ route('customers.store') }}" method="POST" id="customer-form">
         @csrf
 
-        <div class="grid grid-cols-2 gap-4">
-            <div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
                 <label class="block font-semibold mb-1">Name</label>
-                <input type="text" name="name" value="{{ old('name') }}" class="w-full border p-2 rounded @error('name') border-red-500 @enderror">
-                @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <x-input name="name" placeholder="Enter name" />
             </div>
 
             <div>
@@ -27,12 +24,8 @@
 
             <div>
                 <label class="block font-semibold mb-1">Phone</label>
-                <input type="text" name="phone" value="{{ old('phone') }}" class="w-full border p-2 rounded @error('phone') border-red-500 @enderror">
-                @error('phone')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                @enderror
+                <x-phone-input />
             </div>
-
 
             <div>
                 <label class="block font-semibold mb-1">Company Name</label>

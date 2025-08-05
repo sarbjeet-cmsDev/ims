@@ -61,18 +61,23 @@ class CustomerAddressController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCustomerAddressRequest $request, CustomerAddress $address)
+    public function update(UpdateCustomerAddressRequest $request, CustomerAddress $customer_address)
     {
-        $address->update($request->validated());
+        \Log::info('Validated Data:', $request->validated());
+
+        $customer_address->update($request->validated());
 
         return redirect()->route('customer-addresses.index')->with('success', 'Address updated successfully.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        //
+        $customer = CustomerAddress::findOrFail($id);
+        $customer->delete();
+        return redirect()->route('customer-addresses.index')->with('success', 'Customer Address deleted successfully.');
     }
 }
