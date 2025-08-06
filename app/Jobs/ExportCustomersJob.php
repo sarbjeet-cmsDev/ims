@@ -30,6 +30,11 @@ class ExportCustomersJob implements ShouldQueue
         ]);
 
         try {
+            $exportDir = storage_path('app/exports');
+            if (!is_dir($exportDir)) {
+                mkdir($exportDir, 0755, true);
+            }
+
             $fileName = 'exports/customers_' . now()->format('Y_m_d_H_i_s') . '.csv';
             $filePath = storage_path('app/' . $fileName);
 

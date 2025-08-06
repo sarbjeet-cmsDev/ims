@@ -1,42 +1,13 @@
-<<<<<<< HEAD
-echo "HEllo
-"
-=======
+# IMS Project 
 
+Day_4 IMS: Customer Import
 
+php artisan make:model CustomerImport -m
+php artisan migrate
 
-# IMS Laravel Project
+php artisan make:controller CustomerImportController
 
-A Laravel-based Inventory Management System (IMS) with Tailwind CSS, reusable components, and customer management features.
-
-```bash
-
-DAY 2
-
-Integrate in your project for Frontend validation
-
-Create Customer, CustomerAddress Entities and Controllers & ROUTES WITH RESOURCES
-
-php artisan make:controller CustomerController --resource
-php artisan make:controller CustomerAddressesController --resource
-
-apply frontend and backend valiadtion.
-
-backed valiadtion apllying using request.
-frontend valiadtion applying using js.
-
-DAY 3 
-
-php artisan make:job ExportCustomersJob
+php artisan make:job ImportCustomersJob
 
 composer require league/csv
-mkdir -p storage/app/exports
- touch storage/app/exports/test.csv
-ls -l storage/app/exports/
-
-php artisan make:model CustomerExport -m
-php artisan make:controller CustomerExportController
-
-php artisan queue:work --queue=customer-export
-
->>>>>>> c2323ad41ddc0a066d57fda3d244405b631702d7
+php artisan queue:work --queue=customer-import

@@ -5,7 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerAddressController;
 use App\Jobs\ExportCustomersJob;
 use App\Http\Controllers\CustomerExportController;
-
+use App\Http\Controllers\CustomerImportController;
 
 
 Route::get('/', function () {
@@ -25,3 +25,6 @@ Route::get('/customer/export', [CustomerExportController::class, 'index'])->name
 Route::get('/customer/export/{id}/download', [CustomerExportController::class, 'download'])->name('customer-exports.download');
 Route::post('/customer/export', [CustomerExportController::class, 'store'])->name('customer-exports.store');
 
+Route::get('/customer/import', [CustomerImportController::class, 'index']);
+Route::post('/customer/import', [CustomerImportController::class, 'store']);
+Route::get('/customer/import/report/{id}', [CustomerImportController::class, 'downloadReport']);
