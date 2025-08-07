@@ -1,7 +1,5 @@
 <?php
 
-// app/Http/Controllers/CustomerImportController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\CustomerImport;
@@ -24,7 +22,9 @@ class CustomerImportController extends Controller
         ]);
 
         $file = $request->file('csv_file');
-        $path = $file->store('imports');
+        $filename = uniqid() . '_' . $file->getClientOriginalName();
+
+        $path = $file->storeAs('customer-import/reports', $filename, 'local');
 
         $import = CustomerImport::create([
             'file_path' => $path,
@@ -36,14 +36,15 @@ class CustomerImportController extends Controller
         return redirect()->back()->with('success', 'Customer import started.');
     }
 
+
     public function downloadReport($id)
     {
         $import = CustomerImport::findOrFail($id);
 
-        if (!$import->report_path || !Storage::exists($import->report_path)) {
-            abort(404, 'Report file not found.');
+        if (!in_array($import->status, ['finished', 'failed']) || !$import->report_path) {
+            abort(404);
         }
 
-        return Storage::download($import->report_path);
+        return Storage::disk('local')->download($import->report_path);
     }
 }

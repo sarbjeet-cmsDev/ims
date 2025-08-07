@@ -1,8 +1,5 @@
 <?php
 
-
-// app/Jobs/ImportCustomersJob.php
-
 namespace App\Jobs;
 
 use App\Models\Customer;
@@ -38,10 +35,8 @@ class ImportCustomersJob implements ShouldQueue
         ]);
 
         $reportPath = "customer-import/reports/report_{$import->id}.log";
-        
-        $reportFullPath = Storage::path($reportPath);
+        $reportFullPath = Storage::disk('local')->path($reportPath);
 
-        // Ensure directory exists
         if (!file_exists(dirname($reportFullPath))) {
             mkdir(dirname($reportFullPath), 0755, true);
         }
@@ -49,7 +44,8 @@ class ImportCustomersJob implements ShouldQueue
         $reportHandle = fopen($reportFullPath, 'w');
 
         try {
-            $csvPath = Storage::path($import->file_path);
+            $csvPath = Storage::disk('local')->path($import->file_path);
+
             if (!file_exists($csvPath)) {
                 throw new \Exception("CSV file not found at path: $csvPath");
             }
@@ -92,7 +88,6 @@ class ImportCustomersJob implements ShouldQueue
                 'status' => 'finished',
                 'finished_at' => now(),
                 'report_path' => $reportPath,
-
             ]);
         } catch (Throwable $e) {
             fwrite($reportHandle, "Fatal Error: " . $e->getMessage() . PHP_EOL);
