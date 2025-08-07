@@ -1,18 +1,19 @@
 <?php
 
+
 namespace App\Jobs;
 
 use App\Models\Customer;
-use App\Models\CustomerImport;
+use App\Models\DataJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Bus\Dispatchable;
 use League\Csv\Reader;
-use Throwable;
 use Carbon\Carbon;
+use Throwable;
 
 class ImportCustomersJob implements ShouldQueue
 {
@@ -25,32 +26,29 @@ class ImportCustomersJob implements ShouldQueue
         $this->importId = $importId;
     }
 
-    public function handle()
+   public function handle()
     {
-        $import = CustomerImport::findOrFail($this->importId);
+        $job = DataJob::findOrFail($this->importId);
 
-        $import->update([
+        $job->update([
             'status' => 'running',
             'started_at' => now(),
         ]);
 
-        $reportPath = "customer-import/reports/report_{$import->id}.log";
+        $reportPath = "customer-import/reports/report_{$job->id}.log";
         $reportFullPath = Storage::disk('local')->path($reportPath);
 
         if (!file_exists(dirname($reportFullPath))) {
             mkdir(dirname($reportFullPath), 0755, true);
         }
 
-        $reportHandle = fopen($reportFullPath, 'w');
+        $report = fopen($reportFullPath, 'w');
+
+        $errorCount = 0;
 
         try {
-            $csvPath = Storage::disk('local')->path($import->file_path);
-
-            if (!file_exists($csvPath)) {
-                throw new \Exception("CSV file not found at path: $csvPath");
-            }
-
-            fwrite($reportHandle, "Starting import from: $csvPath\n");
+            $csvPath = Storage::disk('local')->path($job->file_path);
+            if (!file_exists($csvPath)) throw new \Exception("CSV file not found");
 
             $csv = Reader::createFromPath($csvPath, 'r');
             $csv->setHeaderOffset(0);
@@ -59,7 +57,7 @@ class ImportCustomersJob implements ShouldQueue
             foreach ($records as $index => $record) {
                 try {
                     if (empty($record['name']) || empty($record['email'])) {
-                        throw new \Exception("Missing required fields (name/email)");
+                        throw new \Exception("Missing required fields");
                     }
 
                     Customer::create([
@@ -74,29 +72,34 @@ class ImportCustomersJob implements ShouldQueue
                         'notes' => $record['notes'] ?? null,
                         'credit_limit' => (float) ($record['credit_limit'] ?? 0),
                         'total_purchases' => (float) ($record['total_purchases'] ?? 0),
-                        'last_purchase_at' => $this->parseDate($record['last_purchase_at'] ?? null),
-                        'registered_at' => $this->parseDate($record['registered_at'] ?? null),
+                        'last_purchase_at' => $this->parseDate($record['last_purchase_at']),
+                        'registered_at' => $this->parseDate($record['registered_at']),
                     ]);
                 } catch (Throwable $e) {
-                    fwrite($reportHandle, "Row $index failed: " . $e->getMessage() . PHP_EOL);
+                    $errorCount++;
+                    fwrite($report, "Row $index failed: " . $e->getMessage() . PHP_EOL);
                 }
             }
 
-            fclose($reportHandle);
+            if ($errorCount === 0) {
+                fwrite($report, "All records imported successfully. No errors found." . PHP_EOL);
+            }
 
-            $import->update([
+            fclose($report);
+
+            $job->update([
                 'status' => 'finished',
                 'finished_at' => now(),
                 'report_path' => $reportPath,
             ]);
         } catch (Throwable $e) {
-            fwrite($reportHandle, "Fatal Error: " . $e->getMessage() . PHP_EOL);
-            fclose($reportHandle);
+            fwrite($report, "Fatal Error: " . $e->getMessage() . PHP_EOL);
+            fclose($report);
 
-            $import->update([
+            $job->update([
                 'status' => 'failed',
                 'finished_at' => now(),
-                'error' => $e->getMessage(),
+                'error_message' => $e->getMessage(),
                 'report_path' => $reportPath,
             ]);
         }
@@ -113,10 +116,10 @@ class ImportCustomersJob implements ShouldQueue
 
     public function failed(Throwable $e)
     {
-        CustomerImport::where('id', $this->importId)->update([
+        DataJob::where('id', $this->importId)->update([
             'status' => 'failed',
             'finished_at' => now(),
-            'error' => $e->getMessage(),
+            'error_message' => $e->getMessage(),
         ]);
     }
 }

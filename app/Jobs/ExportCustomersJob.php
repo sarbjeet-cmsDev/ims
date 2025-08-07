@@ -1,42 +1,45 @@
 <?php
 
+
 namespace App\Jobs;
 
 use App\Models\Customer;
+use App\Models\DataJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Models\CustomerExport;
 
 class ExportCustomersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $export;
+    public $jobId;
 
-    public function __construct(CustomerExport $export)
+    public function __construct(int $jobId)
     {
-        $this->export = $export;
+        $this->jobId = $jobId;
     }
 
     public function handle()
     {
-        $this->export->update([
+        $job = DataJob::findOrFail($this->jobId);
+
+        $job->update([
             'status' => 'running',
             'started_at' => now(),
         ]);
 
         try {
-            $exportDir = storage_path('app/exports');
-            if (!is_dir($exportDir)) {
-                mkdir($exportDir, 0755, true);
-            }
-
-            $fileName = 'exports/customers_' . now()->format('Y_m_d_H_i_s') . '.csv';
+            $fileName = 'exports/customers_' . now()->format('Ymd_His') . '.csv';
             $filePath = storage_path('app/' . $fileName);
+            $dir = dirname($filePath);
+
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
 
             $handle = fopen($filePath, 'w');
 
@@ -68,15 +71,15 @@ class ExportCustomersJob implements ShouldQueue
 
             fclose($handle);
 
-            $this->export->update([
+            $job->update([
                 'status' => 'finished',
                 'file_path' => $fileName,
                 'finished_at' => now(),
             ]);
         } catch (\Throwable $e) {
-            $this->export->update([
+            $job->update([
                 'status' => 'failed',
-                'error' => $e->getMessage(),
+                'error_message' => $e->getMessage(),
             ]);
         }
     }

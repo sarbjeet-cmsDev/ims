@@ -12,7 +12,7 @@
     
     <div class="mb-4">
        <a href="{{ route('customers.create') }}" class="bg-green-500 text-white px-3 py-2 rounded">Add Customer</a>
-       <a href="{{ route('customer-exports.index') }}" class="bg-green-500 text-white px-3 py-2 rounded">View Export Jobs</a>
+       <a href="{{ url('/customer/export') }}" class="bg-green-500 text-white px-3 py-2 rounded">View Export </a>
     </div>
 
     @if ($customers->isEmpty())
