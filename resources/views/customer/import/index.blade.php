@@ -36,20 +36,18 @@
                     <td class="border px-4 py-2">customer-import</td>
                     <td class="border px-4 py-2">{{ $import->started_at ?? '—' }}</td>
                     <td class="border px-4 py-2">
-                        @if ($import->status === 'finished')
+                        @if ($import->status === 'Finished')
                             <span class="text-green-600 font-bold">Finished</span>
-                        @elseif ($import->status === 'running')
-                            <span class="text-blue-600">Running</span>
-                        @elseif ($import->status === 'failed')
+                        @elseif ($import->status === 'Failed')
                             <span class="text-red-600">Failed</span>
                         @else
                             <span class="text-gray-600">Pending</span>
                         @endif
                     </td>
                     <td class="border px-4 py-2">
-                        @if(in_array($import->status, ['finished', 'failed']))
+                        @if(in_array($import->status, ['Finished', 'Failed']))
                             <a href="{{ url('/customer/import/report/' . $import->id) }}" class="text-blue-500 underline">
-                                {{ $import->status === 'finished' ? 'Download' : 'View Error' }}
+                                {{ $import->status === 'Finished' ? 'Download' : 'View Error' }}
                             </a>
                         @else
                             —
@@ -59,7 +57,5 @@
             @endforeach
         </tbody>
     </table>
-
-
 </div>
 @endsection

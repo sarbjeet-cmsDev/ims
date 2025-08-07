@@ -7,7 +7,6 @@ use App\Jobs\ExportCustomersJob;
 use App\Http\Controllers\CustomerExportController;
 use App\Http\Controllers\CustomerImportController;
 
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -27,4 +26,6 @@ Route::post('/customer/export', [CustomerExportController::class, 'store'])->nam
 
 Route::get('/customer/import', [CustomerImportController::class, 'index']);
 Route::post('/customer/import', [CustomerImportController::class, 'store']);
-Route::get('/customer/import/report/{id}', [CustomerImportController::class, 'downloadReport']);
+Route::get('/customer-imports/{id}/report', [CustomerImportController::class, 'downloadReport'])
+    ->name('customer-imports.downloadReport');
+
