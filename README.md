@@ -1,13 +1,16 @@
 # IMS Project 
 
-Day_4 IMS: Customer Import
+Day_6 IMS: learn all Query builder methods
 
-php artisan make:model CustomerImport -m
-php artisan migrate
-
-php artisan make:controller CustomerImportController
-
-php artisan make:job ImportCustomersJob
-
-composer require league/csv
-php artisan queue:work --queue=customer-import
+1. Basic Usage (get, first, find, pluck)
+2. filtreing data
+3. Ordering, Limiting
+4. Joins
+5. Aggregates
+6. Update Data
+7. Insert data
+8. Delete Data
+9. Raw Expressions
+10. Pagination
+11. where between
+12. Upserts
