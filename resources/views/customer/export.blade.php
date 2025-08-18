@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-2xl font-bold mb-4">Customer Export</h1>
+    <h1 class="text-2xl font-bold mb-4"> Export</h1>
 
     <form method="POST" action="{{ url('/customer/export') }}" class="mb-6">
         @csrf
@@ -61,4 +61,5 @@
         </tbody>
     </table>
 </div>
+
 @endsection

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Jobs;
 
 use App\Models\Customer;
@@ -26,7 +25,7 @@ class ImportCustomersJob implements ShouldQueue
         $this->importId = $importId;
     }
 
-   public function handle()
+    public function handle()
     {
         $job = DataJob::findOrFail($this->importId);
 
@@ -35,7 +34,7 @@ class ImportCustomersJob implements ShouldQueue
             'started_at' => now(),
         ]);
 
-        $reportPath = "customer-import/reports/report_{$job->id}.log";
+        $reportPath = "customer-import/reports/report_{$job->id}.csv";
         $reportFullPath = Storage::disk('local')->path($reportPath);
 
         if (!file_exists(dirname($reportFullPath))) {
@@ -43,6 +42,8 @@ class ImportCustomersJob implements ShouldQueue
         }
 
         $report = fopen($reportFullPath, 'w');
+
+        fputcsv($report, ['Row', 'Status', 'Message']);
 
         $errorCount = 0;
 
@@ -57,7 +58,12 @@ class ImportCustomersJob implements ShouldQueue
             foreach ($records as $index => $record) {
                 try {
                     if (empty($record['name']) || empty($record['email'])) {
-                        throw new \Exception("Missing required fields");
+                        throw new \Exception("Missing required fields (name or email)");
+                    }
+
+                    if (Customer::where('email', $record['email'])->exists()) {
+                        fputcsv($report, [$index + 1, 'Skipped', 'Duplicate record (email already exists)']);
+                        continue;
                     }
 
                     Customer::create([
@@ -75,14 +81,16 @@ class ImportCustomersJob implements ShouldQueue
                         'last_purchase_at' => $this->parseDate($record['last_purchase_at']),
                         'registered_at' => $this->parseDate($record['registered_at']),
                     ]);
+
+                    fputcsv($report, [$index + 1, 'Success', 'Imported successfully']);
                 } catch (Throwable $e) {
                     $errorCount++;
-                    fwrite($report, "Row $index failed: " . $e->getMessage() . PHP_EOL);
+                    fputcsv($report, [$index + 1, 'Failed', $e->getMessage()]);
                 }
             }
 
             if ($errorCount === 0) {
-                fwrite($report, "All records imported successfully. No errors found." . PHP_EOL);
+                fputcsv($report, ['-', 'Success', 'All records imported successfully. No errors found.']);
             }
 
             fclose($report);
@@ -93,7 +101,7 @@ class ImportCustomersJob implements ShouldQueue
                 'report_path' => $reportPath,
             ]);
         } catch (Throwable $e) {
-            fwrite($report, "Fatal Error: " . $e->getMessage() . PHP_EOL);
+            fputcsv($report, ['-', 'Fatal Error', $e->getMessage()]);
             fclose($report);
 
             $job->update([

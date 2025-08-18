@@ -2,9 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="text-2xl font-bold mb-4">Customer Import</h1>
-
-    {{-- Import Form --}}
+    <h1 class="text-2xl font-bold mb-4">Import</h1>
     <form method="POST" action="{{ url('/customer/import') }}" enctype="multipart/form-data" class="mb-6">
         @csrf
         <x-file-uploader />
@@ -14,7 +12,6 @@
         </button>
     </form>
 
-    {{-- Success/Error Feedback --}}
     @if(session('success'))
         <div class="bg-green-100 text-green-800 p-2 rounded mb-4">{{ session('success') }}</div>
     @endif
@@ -22,7 +19,6 @@
         <div class="bg-red-100 text-red-800 p-2 rounded mb-4">{{ session('error') }}</div>
     @endif
 
-    {{-- Import Jobs Table --}}
     <table class="table-auto w-full border-collapse border border-gray-300">
         <thead class="bg-gray-100">
             <tr>

@@ -20,11 +20,11 @@ class DataJobController extends Controller
     {
         $job = DataJob::create([
             'type' => 'export',
-            'queue' => 'customer-export',
+            'queue' => 'export',
             'status' => 'pending',
         ]);
 
-        ExportCustomersJob::dispatch($job->id)->onQueue('customer-export');
+        ExportCustomersJob::dispatch($job->id)->onQueue('export');
 
         return redirect()->back()->with('success', 'Export job started!');
     }
@@ -46,15 +46,15 @@ class DataJobController extends Controller
 
         $job = DataJob::create([
             'type' => 'import',
-            'queue' => 'customer-import',
+            'queue' => 'import',
             'status' => 'pending',
             'file_path' => $path,
         ]);
 
-        ImportCustomersJob::dispatch($job->id)->onQueue('customer-import');
-
+        ImportCustomersJob::dispatch($job->id)->onQueue('import');
         return redirect()->back()->with('success', 'Import job started!');
     }
+
 
     public function download($id)
     {
@@ -71,8 +71,9 @@ class DataJobController extends Controller
             abort(404, 'Report not found.');
         }
 
-        return Storage::download($job->report_path, 'customer_import_report_' . $job->id . '.log');
+        return Storage::download($job->report_path, 'import_report_' . $job->id . '.csv');
     }
+
 
 }
 

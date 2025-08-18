@@ -21,15 +21,6 @@ Route::get('/export-customers', function () {
     return 'Export started!';
 });
 
-//Route::get('/customer/export', [CustomerExportController::class, 'index'])->name('customer-exports.index');
-//Route::get('/customer/export/{id}/download', [CustomerExportController::class, 'download'])->name('customer-exports.download');
-//Route::post('/customer/export', [CustomerExportController::class, 'store'])->name('customer-exports.store');
-
-//Route::get('/customer/import', [CustomerImportController::class, 'index']);
-//Route::post('/customer/import', [CustomerImportController::class, 'store']);
-//Route::get('/customer-imports/{id}/report', [CustomerImportController::class, 'downloadReport'])
- //   ->name('customer-imports.downloadReport');
-
 Route::get('/customer/export', [DataJobController::class, 'exportIndex']);
 Route::post('/customer/export', [DataJobController::class, 'exportStore']);
 Route::get('/customer/export/download/{id}', [DataJobController::class, 'download']);
